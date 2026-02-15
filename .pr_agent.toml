@@ -20,6 +20,27 @@ extra_instructions = """Focus on:
 - Docker/K8s configuration correctness
 - Async/await correctness
 - Test coverage gaps
+
+CRITICAL - OpenTelemetry (OTEL) Instrumentation (MUST HAVE):
+- Every new API endpoint or service function MUST have proper OTEL span creation
+- All spans MUST include relevant attributes (service.name, operation, request_id)
+- External calls (HTTP, DB, cache, message queue) MUST be wrapped with OTEL spans
+- Background tasks and async operations MUST carry trace context
+- Flag any service call or endpoint missing OTEL instrumentation as a blocking issue
+- Ensure proper use of tracer.start_as_current_span() with meaningful span names
+- Verify span status is set correctly on errors (StatusCode.ERROR with description)
+
+CRITICAL - Exception Handling (MUST HAVE):
+- Every API endpoint MUST have structured exception handling with proper error responses
+- NEVER use bare except: or except Exception: without logging and re-raising or returning proper status
+- All caught exceptions MUST be logged using logger.exception() or logger.error(exc_info=True)
+- Use custom exception classes that extend appropriate base exceptions
+- External service calls MUST have try/except with specific exception types
+- Async operations MUST handle CancelledError and TimeoutError explicitly
+- Error responses MUST include correlation/request IDs for traceability
+- Exception context MUST be propagated to OTEL spans using span.record_exception() and span.set_status()
+- Log messages MUST be structured (JSON) with trace_id, span_id, service name, and request context
+- NEVER swallow exceptions silently - always log, record in span, and handle appropriately
 """
 require_focused_review = true
 require_score_review = true
@@ -34,6 +55,10 @@ extra_instructions = """Suggest improvements for:
 - Improving error messages and logging
 - Strengthening input validation
 - Improving test coverage
+- Adding OTEL spans to uninstrumented code paths
+- Replacing bare except blocks with specific exception handling
+- Adding structured logging with trace context to catch blocks
+- Using span.record_exception() in error handling paths
 """
 
 [pr_update_changelog]
