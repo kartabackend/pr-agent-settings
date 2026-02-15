@@ -1,0 +1,51 @@
+# =============================================================================
+# Global Qodo Merge (PR-Agent) Configuration for kartabackend
+# =============================================================================
+# This is the organization-wide default configuration.
+# Individual repos can override these settings with their own .pr_agent.toml.
+# Docs: https://qodo-merge-docs.qodo.ai/usage-guide/configuration_options/
+
+[pr_description]
+generate_ai_title = true
+use_bullet_points = true
+enable_semantic_files_types = true
+collapsible_file_list = "adaptive"
+include_generated_by_header = true
+
+[pr_reviewer]
+extra_instructions = """Focus on:
+- Python best practices (PEP 8, type hints, docstrings)
+- Security vulnerabilities and secrets exposure
+- Error handling and exception propagation
+- Docker/K8s configuration correctness
+- Async/await correctness
+- Test coverage gaps
+"""
+require_focused_review = true
+require_score_review = true
+require_tests_review = true
+require_estimate_effort_to_review = true
+num_max_findings = 10
+
+[pr_code_suggestions]
+num_code_suggestions = 5
+extra_instructions = """Suggest improvements for:
+- Adding type hints where missing
+- Improving error messages and logging
+- Strengthening input validation
+- Improving test coverage
+"""
+
+[pr_update_changelog]
+push_changelog_changes = false
+
+[github_app]
+handle_pr_actions = ['opened', 'reopened', 'ready_for_review']
+handle_push_trigger = true
+push_trigger_ignore_bot_commits = true
+push_trigger_wait_for_initial_review = true
+pr_commands = [
+  "/describe",
+  "/review --pr_reviewer.num_max_findings=10",
+  "/improve --pr_code_suggestions.num_code_suggestions=5",
+]
